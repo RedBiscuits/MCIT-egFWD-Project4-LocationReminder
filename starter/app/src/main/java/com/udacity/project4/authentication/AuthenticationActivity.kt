@@ -41,9 +41,6 @@ class AuthenticationActivity : AppCompatActivity() {
             registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
                 if (result.resultCode == RESULT_OK) {
                     Log.d(TAG, "Login Successful")
-                    val intent = Intent(this, RemindersActivity::class.java)
-                    intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
-                    startActivity(intent)
                 }else
                 {
                     Toast.makeText(this , "Sign in failed" , Toast.LENGTH_SHORT).show()
