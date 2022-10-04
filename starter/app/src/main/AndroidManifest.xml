@@ -1,13 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.udacity.project4">
-    <!--
-         The ACCESS_COARSE/FINE_LOCATION permissions are not required to use
-         Google Maps Android API v2, but you must specify either coarse or fine
-         location permissions for the 'MyLocation' functionality.
-    -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <!--         The BACKGROUND_LOCATION permission is required for geofencing functionality to work on Q+ -->
     <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
 
     <uses-permission android:name="android.permission.INTERNET" />
@@ -17,6 +11,7 @@
     <application
         android:name=".MyApp"
         android:allowBackup="true"
+        android:usesCleartextTraffic="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
@@ -36,15 +31,14 @@
             android:value="@string/google_maps_key" />
 
         <activity android:name=".authentication.AuthenticationActivity">
-        </activity>
-        <activity android:name=".locationreminders.RemindersActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
         </activity>
+        <activity android:name=".locationreminders.RemindersActivity" />
+
         <receiver
             android:name=".locationreminders.geofence.GeofenceBroadcastReceiver"
             android:enabled="true"
