@@ -3,7 +3,6 @@ package com.udacity.project4.locationreminders.savereminder
 import android.app.Application
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.google.android.gms.maps.model.PointOfInterest
 import com.udacity.project4.R
 import com.udacity.project4.base.BaseViewModel
 import com.udacity.project4.base.NavigationCommand
@@ -12,14 +11,16 @@ import com.udacity.project4.locationreminders.data.dto.ReminderDTO
 import com.udacity.project4.locationreminders.reminderslist.ReminderDataItem
 import kotlinx.coroutines.launch
 
-class SaveReminderViewModel(val app: Application, val dataSource: ReminderDataSource) :
+class SaveReminderViewModel(val app: Application, private val dataSource: ReminderDataSource) :
     BaseViewModel(app) {
     val reminderTitle = MutableLiveData<String>()
     val reminderDescription = MutableLiveData<String>()
     val reminderSelectedLocationStr = MutableLiveData<String>()
-    val selectedPOI = MutableLiveData<PointOfInterest>()
+    //val selectedPOI = MutableLiveData<PointOfInterest>()
     val latitude = MutableLiveData<Double>()
     val longitude = MutableLiveData<Double>()
+    val reminderMutableData = MutableLiveData<String>()
+    val remindingLocationRange = MutableLiveData(30)
 
     /**
      * Clear the live data objects to start fresh next time the view model gets called
@@ -28,9 +29,22 @@ class SaveReminderViewModel(val app: Application, val dataSource: ReminderDataSo
         reminderTitle.value = null
         reminderDescription.value = null
         reminderSelectedLocationStr.value = null
-        selectedPOI.value = null
+        //selectedPOI.value = null
         latitude.value = null
         longitude.value = null
+        reminderMutableData.value = null
+    }
+
+    /*Sets the livedata to the reminder to be edited*/
+    fun editReminder(reminderData: ReminderDataItem){
+
+        reminderTitle.value = reminderData.title
+        reminderDescription.value = reminderData.description
+        reminderSelectedLocationStr.value = reminderData.location
+        latitude.value = reminderData.latitude
+        longitude.value = reminderData.longitude
+        reminderMutableData.value = reminderData.id
+
     }
 
     /**
@@ -60,7 +74,8 @@ class SaveReminderViewModel(val app: Application, val dataSource: ReminderDataSo
             )
             showLoading.value = false
             showToast.value = app.getString(R.string.reminder_saved)
-            navigationCommand.value = NavigationCommand.Back
+            onClear()
+            navigationCommand.value = NavigationCommand.To(SaveReminderFragmentDirections.actionSaveReminderFragmentToReminderListFragment())
         }
     }
 
@@ -79,4 +94,5 @@ class SaveReminderViewModel(val app: Application, val dataSource: ReminderDataSo
         }
         return true
     }
+
 }
