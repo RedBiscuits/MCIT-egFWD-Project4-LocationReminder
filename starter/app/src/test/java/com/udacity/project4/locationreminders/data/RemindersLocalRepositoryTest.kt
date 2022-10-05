@@ -1,12 +1,15 @@
 package com.udacity.project4.locationreminders.data
 
+import com.udacity.project4.locationreminders.MainCoroutineRule
 import com.udacity.project4.locationreminders.data.dto.ReminderDTO
 import com.udacity.project4.locationreminders.data.dto.Result
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.runBlockingTest
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.core.IsEqual
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
 
 /*
@@ -23,6 +26,9 @@ class RemindersLocalRepositoryTest {
     private val reminder = ReminderDTO("reminder", "description", "location", 12.0, 12.0, "0")
     private val reminder1 = ReminderDTO("reminder1", "description1", "location1", 16.0, 16.0, "1")
 //    private lateinit var database: RemindersDatabase
+
+    @get:Rule
+    var mainCoroutineRule = MainCoroutineRule()
 
     @Before
     fun setup() {
@@ -41,7 +47,7 @@ class RemindersLocalRepositoryTest {
     }
 
     @Test
-    fun saveReminder_getsReminderById() = runBlocking {
+    fun saveReminder_getsReminderById() = mainCoroutineRule.runBlockingTest {
         // Given
         fakeRepository.saveReminder(reminder)
 
@@ -58,7 +64,7 @@ class RemindersLocalRepositoryTest {
     }
 
     @Test
-    fun saveReminder_getsAllReminders() = runBlocking {
+    fun saveReminder_getsAllReminders() = mainCoroutineRule.runBlockingTest {
         // Given
         fakeRepository.saveReminder(reminder)
         fakeRepository.saveReminder(reminder1)
@@ -76,7 +82,7 @@ class RemindersLocalRepositoryTest {
     }
 
     @Test
-    fun deleteReminder_deletesSpecificReminder() = runBlocking {
+    fun deleteReminder_deletesSpecificReminder() = mainCoroutineRule.runBlockingTest {
         // Given
         fakeRepository.saveReminder(reminder)
         fakeRepository.saveReminder(reminder1)
@@ -91,7 +97,7 @@ class RemindersLocalRepositoryTest {
     }
 
     @Test
-    fun deleteReminders_deletesAllReminders() = runBlocking {
+    fun deleteReminders_deletesAllReminders() = mainCoroutineRule.runBlockingTest {
         // Given
         fakeRepository.saveReminder(reminder)
         fakeRepository.saveReminder(reminder1)
@@ -106,7 +112,7 @@ class RemindersLocalRepositoryTest {
     }
 
     @Test
-    fun errorReminder_returnsErrorWhenEmpty() = runBlocking {
+    fun errorReminder_returnsErrorWhenEmpty() = mainCoroutineRule.runBlockingTest {
 
         // Given
         fakeRepository.deleteAllReminders()

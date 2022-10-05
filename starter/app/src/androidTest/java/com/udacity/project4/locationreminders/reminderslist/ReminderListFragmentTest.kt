@@ -110,5 +110,4 @@ class ReminderListFragmentTest : KoinTest{
         reminderDataSource.deleteAllReminders()
     }
 
-//    TODO: add testing for the error messages.
 }
