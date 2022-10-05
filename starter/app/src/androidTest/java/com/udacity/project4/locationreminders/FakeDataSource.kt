@@ -1,9 +1,11 @@
-package com.udacity.project4.locationreminders.data
+package com.udacity.project4.locationreminders
 
+import com.udacity.project4.locationreminders.data.ReminderDataSource
 import com.udacity.project4.locationreminders.data.dto.ReminderDTO
 import com.udacity.project4.locationreminders.data.dto.Result
 
-class FakeDataSource(var reminders: MutableList<ReminderDTO>? = mutableListOf()) : ReminderDataSource {
+class FakeDataSource(var reminders: MutableList<ReminderDTO>? = mutableListOf()) :
+    ReminderDataSource {
 
     private var shouldReturnError = false
 

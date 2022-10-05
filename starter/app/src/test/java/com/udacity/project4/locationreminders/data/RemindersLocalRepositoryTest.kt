@@ -1,38 +1,33 @@
-package com.udacity.project4.locationreminders.data.local
+package com.udacity.project4.locationreminders.data
 
-import androidx.room.Room
-import androidx.test.core.app.ApplicationProvider
-import androidx.test.ext.junit.runners.AndroidJUnit4
-import androidx.test.filters.MediumTest
 import com.udacity.project4.locationreminders.data.dto.ReminderDTO
 import com.udacity.project4.locationreminders.data.dto.Result
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
-import net.bytebuddy.matcher.ElementMatchers.`is`
-import org.hamcrest.CoreMatchers
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.core.IsEqual
-import org.junit.After
-import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
-import org.junit.runner.RunWith
-import org.mockito.internal.matchers.Null
 
+/*
+* These are two different test methods one with real DB and repository (commented code)
+* while the other with the fake data source
+* */
+
+//@RunWith(AndroidJUnit4::class)
 @ExperimentalCoroutinesApi
-@RunWith(AndroidJUnit4::class)
-@MediumTest
 class RemindersLocalRepositoryTest {
 
 
-    private lateinit var repository: RemindersLocalRepository
-    private lateinit var database: RemindersDatabase
+    private lateinit var fakeRepository: FakeDataSource
     private val reminder = ReminderDTO("reminder", "description", "location", 12.0, 12.0, "0")
     private val reminder1 = ReminderDTO("reminder1", "description1", "location1", 16.0, 16.0, "1")
+//    private lateinit var database: RemindersDatabase
 
     @Before
     fun setup() {
+        fakeRepository = FakeDataSource(arrayListOf())
+        /*
         database = Room.inMemoryDatabaseBuilder(
             ApplicationProvider.getApplicationContext(),
             RemindersDatabase::class.java
@@ -41,15 +36,17 @@ class RemindersLocalRepositoryTest {
             .build()
 
         repository = RemindersLocalRepository(database.reminderDao(), Dispatchers.Unconfined)
+
+         */
     }
 
     @Test
     fun saveReminder_getsReminderById() = runBlocking {
         // Given
-        repository.saveReminder(reminder)
+        fakeRepository.saveReminder(reminder)
 
         // When
-        val result = repository.getReminder(reminder.id) as Result.Success
+        val result = fakeRepository.getReminder(reminder.id) as Result.Success
 
         // Then
         assertThat(result.data.title, IsEqual(reminder.title))
@@ -63,11 +60,11 @@ class RemindersLocalRepositoryTest {
     @Test
     fun saveReminder_getsAllReminders() = runBlocking {
         // Given
-        repository.saveReminder(reminder)
-        repository.saveReminder(reminder1)
+        fakeRepository.saveReminder(reminder)
+        fakeRepository.saveReminder(reminder1)
 
         // When
-        val result = repository.getReminders() as Result.Success
+        val result = fakeRepository.getReminders() as Result.Success
 
         // Then
         assertThat(result.data[0].title, IsEqual(reminder.title))
@@ -81,12 +78,12 @@ class RemindersLocalRepositoryTest {
     @Test
     fun deleteReminder_deletesSpecificReminder() = runBlocking {
         // Given
-        repository.saveReminder(reminder)
-        repository.saveReminder(reminder1)
+        fakeRepository.saveReminder(reminder)
+        fakeRepository.saveReminder(reminder1)
 
         // When
-        repository.deleteReminder(reminder.id)
-        val result = repository.getReminders() as Result.Success
+        fakeRepository.deleteReminder(reminder.id)
+        val result = fakeRepository.getReminders() as Result.Success
 
         //Then
         assertThat(result.data.size, IsEqual(1))
@@ -96,12 +93,12 @@ class RemindersLocalRepositoryTest {
     @Test
     fun deleteReminders_deletesAllReminders() = runBlocking {
         // Given
-        repository.saveReminder(reminder)
-        repository.saveReminder(reminder1)
+        fakeRepository.saveReminder(reminder)
+        fakeRepository.saveReminder(reminder1)
 
         // When
-        repository.deleteAllReminders()
-        val result = repository.getReminders() as Result.Success
+        fakeRepository.deleteAllReminders()
+        val result = fakeRepository.getReminders() as Result.Success
 
         //Then
         assertThat(result.data.size, IsEqual(0))
@@ -112,18 +109,18 @@ class RemindersLocalRepositoryTest {
     fun errorReminder_returnsErrorWhenEmpty() = runBlocking {
 
         // Given
-        repository.deleteAllReminders()
+        fakeRepository.deleteAllReminders()
 
         // When
-        val result = repository.getReminder(reminder.id) as Result.Error
+        val result = fakeRepository.getReminder(reminder.id) as Result.Error
 
         // Then
         assertThat(result.message , IsEqual("Reminder not found!"))
     }
-
+/*
     @After
     fun cleanUp() {
         database.close()
     }
-
+*/
 }
