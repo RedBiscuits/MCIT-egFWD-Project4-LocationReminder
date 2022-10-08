@@ -40,7 +40,7 @@ class RemindersDaoTest {
 
     @Test
     fun insertTaskAndGetById() = runBlockingTest {
-        // GIVEN - Insert a task.
+        // GIVEN - Insert a task to DB.
         database.reminderDao().saveReminder(reminder)
 
         // WHEN - Get the task by id from the database.
@@ -72,10 +72,10 @@ class RemindersDaoTest {
     fun insertTasksAndDeleteAll() = runBlockingTest {
         // GIVEN - Insert a task.
         database.reminderDao().deleteAllReminders()
-        // WHEN - Get the task by id from the database.
+        // WHEN - Get tasks from the database.
         val loaded = database.reminderDao().getReminders()
 
-        // THEN - The loaded data contains the expected values.
+        // THEN - The loaded datais empty.
         assertThat(loaded.size, `is`(0))
 
     }
@@ -85,11 +85,11 @@ class RemindersDaoTest {
         // GIVEN - Insert a task.
         database.reminderDao().saveReminder(reminder)
 
-        // WHEN - Get the task by id from the database.
+        // WHEN - Delete the task by id from the database and load it again.
         database.reminderDao().deleteReminderById(reminder.id)
         val loaded = database.reminderDao().getReminderById(reminder.id)
 
-        // THEN - The loaded data contains the expected values.
+        // THEN - The loaded data doesnot exist.
         assertThat(loaded, nullValue())
     }
 

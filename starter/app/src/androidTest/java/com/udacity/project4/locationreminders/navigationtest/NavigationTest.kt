@@ -38,6 +38,7 @@ import org.koin.test.get
 class NavigationTest :
     AutoCloseKoinTest() {
 
+    // dependencies for the test
     private lateinit var repository: ReminderDataSource
     private lateinit var appContext: Application
     private val dataBindingIdlingResource = DataBindingIdlingResource()
@@ -46,7 +47,11 @@ class NavigationTest :
     @Before
     fun init() {
         stopKoin()//stop the original app koin
+
+        //app context
         appContext = ApplicationProvider.getApplicationContext()
+
+        //models
         val myModule = module {
             viewModel {
                 RemindersListViewModel(
@@ -80,9 +85,12 @@ class NavigationTest :
     @ExperimentalCoroutinesApi
     @Test
     fun showReminderSavedToast() = runBlocking{
+
+        //Given - loading scenario activity to test
         val activityScenario = ActivityScenario.launch(RemindersActivity::class.java)
         dataBindingIdlingResource.monitorActivity(activityScenario)
 
+        // When - clicking add reminder then back then back button
         onView(ViewMatchers.withId(R.id.addReminderFAB)).perform(click())
 //                      CANT REACH TOP BACK BUTTON
 //        onView(
@@ -94,16 +102,18 @@ class NavigationTest :
         pressBack()
         onView(ViewMatchers.withId(R.id.logout)).perform(click())
 
-
+        //then - all goes well
         activityScenario.close()
     }
 
+    // Idling resource initialization
     @Before
     fun registerIdlingResource() {
         IdlingRegistry.getInstance().register(EspressoIdlingResource.countingIdlingResource)
         IdlingRegistry.getInstance().register(dataBindingIdlingResource)
     }
 
+    // Idling resource clear
     @After
     fun unregisterIdlingResource() {
         IdlingRegistry.getInstance().unregister(EspressoIdlingResource.countingIdlingResource)

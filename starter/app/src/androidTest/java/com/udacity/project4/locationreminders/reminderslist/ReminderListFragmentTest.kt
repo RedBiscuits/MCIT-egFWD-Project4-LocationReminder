@@ -42,12 +42,15 @@ import org.mockito.Mockito.verify
 @MediumTest
 class ReminderListFragmentTest : KoinTest{
 
+
+    //data sorce
     private val reminder = ReminderDTO("reminder", "description", "location", 12.0, 12.0, "0")
     private val reminderDataSource: ReminderDataSource by inject()
 
 
     @Before
     fun initRepository() {
+        //stop app koin
         stopKoin()
 
         //use Koin Library as a service locator
@@ -71,17 +74,17 @@ class ReminderListFragmentTest : KoinTest{
     @Test
     fun clickAddReminder_navigateToAddReminder() = runBlockingTest{
 
-        // Given - the fragment itself
+        // Given - the fragment scenirio
         val scenario = launchFragmentInContainer<ReminderListFragment>(Bundle(), R.style.AppTheme)
         val navController = mock(NavController::class.java)
         scenario.onFragment {
             Navigation.setViewNavController(it.view!!, navController)
         }
 
-        // When
+        // When - clicking add FAB
         onView(withId(R.id.addReminderFAB)).perform(click())
 
-        // Then
+        // Then - navigate without error
         verify(navController).navigate(
             ReminderListFragmentDirections.toSaveReminder()
         )
@@ -89,13 +92,13 @@ class ReminderListFragmentTest : KoinTest{
 
     @Test
     fun reminderFragment_DisplayedUI() = runBlockingTest{
-        // Given
+        // Given - add reminder to DB
         reminderDataSource.saveReminder(reminder)
 
-        // When
+        // When - launching fragment
         launchFragmentInContainer<ReminderListFragment>(Bundle(), R.style.AppTheme)
 
-        // Then
+        // Then - checking data is shown to the screen
         onView(withId(R.id.title)).check(matches (withText(reminder.title)))
         onView(withId(R.id.title)).check(matches (isDisplayed()))
         onView(withId(R.id.description)).check(matches (withText(reminder.description)))
@@ -105,6 +108,7 @@ class ReminderListFragmentTest : KoinTest{
     }
 
 
+    //closing DB after done
     @After
     fun cleanupDb() = runBlockingTest {
         reminderDataSource.deleteAllReminders()

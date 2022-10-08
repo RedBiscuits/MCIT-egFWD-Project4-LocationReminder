@@ -20,50 +20,65 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.koin.core.context.stopKoin
 
+/*
+*   View model and live data test
+* */
 @RunWith(AndroidJUnit4::class)
 @ExperimentalCoroutinesApi
 class RemindersListViewModelTest {
 
+    // fake data source and view model
     private lateinit var remindersListViewModel: RemindersListViewModel
     private lateinit var fakeDataSource: FakeDataSource
-    private val observer = Observer<List<ReminderDataItem>>{}
+    private val observer = Observer<List<ReminderDataItem>> {}
 
+    // app context provider
     @get:Rule
     var instantExecutorRule = InstantTaskExecutorRule()
 
+    // test coroutine
     @get:Rule
     var mainCoroutineRule = MainCoroutineRule()
 
+    // initialzations
     @Before
-    fun setUpViewModel(){
+    fun setUpViewModel() {
         stopKoin()
         fakeDataSource = FakeDataSource()
-        remindersListViewModel = RemindersListViewModel(ApplicationProvider.getApplicationContext(), fakeDataSource)
+        remindersListViewModel =
+            RemindersListViewModel(ApplicationProvider.getApplicationContext(), fakeDataSource)
     }
 
+    //
     @Test
-    fun remindersViewModelTest () = mainCoroutineRule.runBlockingTest{
-        // Given
-        val viewModel = RemindersListViewModel(ApplicationProvider.getApplicationContext(),FakeDataSource())
-        viewModel.remindersList.observeForever(observer)
+    fun remindersViewModelTest_AddDataAndCheckForValue() =
+        mainCoroutineRule.runBlockingTest {
 
-        // When
-        viewModel.loadReminders()
-        val value = viewModel.remindersList.getOrAwaitValue()
+            // Given - having view model running with observer
+            val viewModel = RemindersListViewModel(
+                ApplicationProvider.getApplicationContext(),
+                FakeDataSource()
+            )
+            viewModel.remindersList.observeForever(observer)
 
-        // Then
-        assertThat(value, (not(nullValue())))
-    }
+            // When - loading data from viewmodel
+            viewModel.loadReminders()
+            val value = viewModel.remindersList.getOrAwaitValue()
 
+            // Then - checking fetched data value
+            assertThat(value, (not(nullValue())))
+        }
+
+    // no data error test
     @Test
-    fun invalidateShowNoData_showNoData_isTrue()= mainCoroutineRule.runBlockingTest{
-        // Given
+    fun invalidateShowNoData_showNoData_isTrue() = mainCoroutineRule.runBlockingTest {
+        // Given - clearing data source
         fakeDataSource.deleteAllReminders()
 
-        // When
+        // When - loading data from viewmodel to make sure everything is updated and linked
         remindersListViewModel.loadReminders()
 
-        // Then
+        // Then - checking that loaded values are empty and noData works
         assertThat(remindersListViewModel.showNoData.getOrAwaitValue(), `is`(true))
         assertThat(remindersListViewModel.remindersList.getOrAwaitValue().size, `is`(0))
     }
@@ -86,8 +101,9 @@ class RemindersListViewModelTest {
         assertThat(remindersListViewModel.showLoading.getOrAwaitValue(), `is`(false))
     }
 
+    // clearing data source after all tests are done.
     @After
-    fun clearDataSource() = runBlockingTest{
+    fun clearDataSource() = runBlockingTest {
         fakeDataSource.deleteAllReminders()
     }
 

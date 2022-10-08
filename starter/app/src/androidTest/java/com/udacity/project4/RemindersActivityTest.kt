@@ -90,9 +90,13 @@ class RemindersActivityTest :
     @ExperimentalCoroutinesApi
     @Test
     fun showReminderSavedToast() = runBlocking{
+
+        // Given - launching the activity for test
         val activityScenario = ActivityScenario.launch(RemindersActivity::class.java)
         dataBindingIdlingResource.monitorActivity(activityScenario)
 
+        // When -
+        // Clicking addFAb then inputing text to new launched fragment
         onView(withId(R.id.addReminderFAB)).perform(click())
         onView(withId(R.id.reminderTitle)).perform(
             ViewActions.typeText(reminder.title),
@@ -102,15 +106,17 @@ class RemindersActivityTest :
             ViewActions.typeText(reminder.description),
             ViewActions.closeSoftKeyboard()
         )
+
+        // choosing location
         onView(withId(R.id.selectLocation)).perform(click())
-
         onView(withId(com.google.android.material.R.id.snackbar_action)).perform(click())
-
         onView(withId(R.id.map_fragment)).perform(ViewActions.longClick())
+
+        //then saving the reminder
         onView(withId(R.id.save_btn)).perform(click())
         onView(withId(R.id.saveReminder)).perform(click())
 
-
+        // then checking whether a snack bar was shown or not
         onView(ViewMatchers.withText(R.string.reminder_saved)).inRoot(
             RootMatchers.withDecorView(
                 IsNot.not(Matchers.`is`(getActivity(activityScenario)?.window?.decorView))
@@ -122,15 +128,18 @@ class RemindersActivityTest :
                 )
             )
 
+        //Closing activity
         activityScenario.close()
     }
 
+    // registerIdlingResource
     @Before
     fun registerIdlingResource() {
         IdlingRegistry.getInstance().register(EspressoIdlingResource.countingIdlingResource)
         IdlingRegistry.getInstance().register(dataBindingIdlingResource)
     }
 
+    //unregisterIdlingResource
     @After
     fun unregisterIdlingResource() {
         IdlingRegistry.getInstance().unregister(EspressoIdlingResource.countingIdlingResource)

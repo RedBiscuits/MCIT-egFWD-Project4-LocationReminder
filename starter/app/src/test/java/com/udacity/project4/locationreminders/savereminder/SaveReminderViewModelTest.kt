@@ -30,20 +30,27 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.koin.core.context.stopKoin
 
+/*
+*   View model and live data test
+* */
 @ExperimentalCoroutinesApi
 @RunWith(AndroidJUnit4::class)
 class SaveReminderViewModelTest {
 
+    // fake data source and view model
     private lateinit var fakeDataSource: FakeDataSource
     private lateinit var viewModel: SaveReminderViewModel
 
+    // test main coroutine
     @get:Rule
     var mainCoroutineRule = MainCoroutineRule()
 
+    // app context provider
     @get:Rule
     var instantExecutorRule = InstantTaskExecutorRule()
     private val reminder = ReminderDataItem("reminder", "description", "location", 12.0, 12.0,"1")
 
+    // initializations
     @Before
     fun setUpViewModel(){
         stopKoin()
@@ -51,20 +58,21 @@ class SaveReminderViewModelTest {
         viewModel = SaveReminderViewModel(ApplicationProvider.getApplicationContext(), fakeDataSource)
     }
 
+    // saving reminder then clearing all reminders and check all is deleted
     @Test
     fun saveReminderTest_SavingDataThenClearing () = mainCoroutineRule.runBlockingTest{
 
-        // Given
+        // Given - adding reminder data to VM
         viewModel.reminderTitle.value = reminder.title
         viewModel.reminderDescription.value = reminder.description
         viewModel.reminderSelectedLocationStr.value = reminder.location
         viewModel.latitude.value = reminder.latitude
         viewModel.longitude.value = reminder.longitude
 
-        // When
+        // When - clearing all data from VM
         viewModel.onClear()
 
-        // Then
+        // Then - checking LiveData is empty
         MatcherAssert.assertThat(
             viewModel.reminderTitle.getOrAwaitValue(),
             Is.`is`(CoreMatchers.nullValue())
@@ -87,6 +95,7 @@ class SaveReminderViewModelTest {
         )
     }
 
+    // clearing fake data source
     @After
     fun clearDataSource() = runBlockingTest{
         fakeDataSource.deleteAllReminders()
