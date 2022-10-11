@@ -70,7 +70,9 @@ class RemindersDaoTest {
 
     @Test
     fun insertTasksAndDeleteAll() = runBlockingTest {
-        // GIVEN - Insert a task.
+        // GIVEN - Insert tasks then deleting them.
+        database.reminderDao().saveReminder(reminder)
+        database.reminderDao().saveReminder(reminder1)
         database.reminderDao().deleteAllReminders()
         // WHEN - Get tasks from the database.
         val loaded = database.reminderDao().getReminders()
