@@ -1,5 +1,6 @@
 package com.udacity.project4.locationreminders.data
 
+import com.udacity.project4.locationreminders.FakeDataSource
 import com.udacity.project4.locationreminders.MainCoroutineRule
 import com.udacity.project4.locationreminders.data.dto.ReminderDTO
 import com.udacity.project4.locationreminders.data.dto.Result
@@ -13,20 +14,17 @@ import org.junit.Rule
 import org.junit.Test
 
 /*
-* These are two different test methods one with real DB and repository (commented code)
-* while the other with the fake data source
+* Local repository test
 * */
 
-//@RunWith(AndroidJUnit4::class)
 @ExperimentalCoroutinesApi
 class RemindersLocalRepositoryTest {
 
 
-    // Data source and initializations
+    // Data source and reminders initializations
     private lateinit var fakeRepository: FakeDataSource
     private val reminder = ReminderDTO("reminder", "description", "location", 12.0, 12.0, "0")
     private val reminder1 = ReminderDTO("reminder1", "description1", "location1", 16.0, 16.0, "1")
-//    private lateinit var database: RemindersDatabase
 
     // test coroutine
     @get:Rule
@@ -36,17 +34,6 @@ class RemindersLocalRepositoryTest {
     @Before
     fun setup() {
         fakeRepository = FakeDataSource(arrayListOf())
-        /*
-        database = Room.inMemoryDatabaseBuilder(
-            ApplicationProvider.getApplicationContext(),
-            RemindersDatabase::class.java
-        )
-            .allowMainThreadQueries()
-            .build()
-
-        repository = RemindersLocalRepository(database.reminderDao(), Dispatchers.Unconfined)
-
-         */
     }
 
     // save reminder then get the reminder again by ID
@@ -131,10 +118,5 @@ class RemindersLocalRepositoryTest {
         // Then - checking id the result is error as supposed to be
         assertThat(result.message , IsEqual("Reminder not found!"))
     }
-/*
-    @After
-    fun cleanUp() {
-        database.close()
-    }
-*/
+
 }

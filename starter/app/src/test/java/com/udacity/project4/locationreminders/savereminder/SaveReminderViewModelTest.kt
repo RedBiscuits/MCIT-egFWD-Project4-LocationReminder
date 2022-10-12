@@ -1,27 +1,16 @@
 package com.udacity.project4.locationreminders.savereminder
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import androidx.lifecycle.Observer
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.udacity.project4.getOrAwaitValue
+import com.udacity.project4.locationreminders.FakeDataSource
 import com.udacity.project4.locationreminders.MainCoroutineRule
-import com.udacity.project4.locationreminders.data.FakeDataSource
-import com.udacity.project4.locationreminders.data.dto.ReminderDTO
 import com.udacity.project4.locationreminders.reminderslist.ReminderDataItem
-import com.udacity.project4.locationreminders.reminderslist.RemindersListViewModel
-import kotlinx.coroutines.Dispatchers
-
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.test.TestCoroutineDispatcher
-import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runBlockingTest
-import kotlinx.coroutines.test.setMain
 import org.hamcrest.CoreMatchers
 import org.hamcrest.MatcherAssert
-import org.hamcrest.Matchers
 import org.hamcrest.core.Is
 import org.junit.After
 import org.junit.Before
