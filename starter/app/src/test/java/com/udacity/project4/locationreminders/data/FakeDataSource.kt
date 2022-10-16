@@ -10,14 +10,12 @@ import com.udacity.project4.locationreminders.data.dto.Result
 // Fake data class with parametered list of data objects
 class FakeDataSource(var reminders: MutableList<ReminderDTO>? = mutableListOf()) :
 
-// for error testing
+    // Fake reminders provider for fake data source testing class
     ReminderDataSource {
+ 
+    // Boolean for error testing. 
     private var shouldReturnError = false
 
-    //setter
-    fun setShouldReturnError( value:Boolean){
-        shouldReturnError = value
-    }
 
     //gets all reminders passed in the constructor earlier
     //if error is true returns error
